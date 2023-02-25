@@ -1,6 +1,14 @@
 <?php
 $conn = new mysqli("localhost", "root", "", "ajax-test") or die("connection not found");
-$sqlQuery = "select * from students";
+$limit_per_page = 5;
+$page = "";
+if (isset($_POST['page_no'])) {
+    $page = $_POST['page_no'];
+} else {
+    $page = 1;
+}
+$offset = ($page - 1) * $limit_per_page;
+$sqlQuery = "select * from students LIMIT {$offset}, {$limit_per_page}";
 $result = $conn->query($sqlQuery);
 $output = "";
 if ($result->num_rows > 0) {
@@ -26,6 +34,22 @@ if ($result->num_rows > 0) {
     ";
     }
     $output .= "</tbody></table>";
+    $recordsQuery = "select * from students";
+    $records = $conn->query($recordsQuery);
+    $totalRecords = $records->num_rows;
+    $totalPages = ceil($totalRecords / $limit_per_page);
+    $output .= "<div id='pagination'>";
+
+    for ($i = 1; $i <= $totalPages; $i++) {
+        if ($i == $page) {
+            $active_page = "active";
+        } else {
+            $active_page = "";
+        }
+        $output .= "<a href='' id='{$i}' class='{$active_page}'>{$i}</a>";
+    }
+
+    $output .= "</div>";
     $conn->close();
     echo $output;
 } else {

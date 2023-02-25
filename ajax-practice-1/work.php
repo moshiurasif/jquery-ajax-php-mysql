@@ -48,7 +48,6 @@
             background-color: #fff;
             padding: 20px;
             width: 40%;
-
             top: 20%;
             left: 50%;
             transform: translateX(-50%);
@@ -68,6 +67,26 @@
             top: -15px;
             right: -15px;
             cursor: pointer;
+        }
+
+        #pagination {
+            text-align: center;
+        }
+
+        a {
+            display: inline-block;
+            background-color: purple;
+            color: #fff;
+            text-align: center;
+            margin: 3px;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 5px;
+        }
+
+        .active {
+            background-color: green;
         }
     </style>
 </head>
@@ -115,16 +134,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         $(document).ready(function() {
-            function loadData() {
+            function loadData(page) {
                 $.ajax({
                     url: "ajax-load.php",
                     type: "POST",
+                    data: {
+                        page_no: page
+                    },
                     success: function(data) {
                         $("#load-table").html(data)
                     }
                 })
             }
             loadData();
+
+            // pagination
+            $(document).on("click", "#pagination a", function(e) {
+                e.preventDefault();
+                let page_id = $(this).attr("id");
+                loadData(page_id);
+            })
+
             // insert data
             $("#btn-submit").on("click", function(e) {
                 e.preventDefault();
@@ -238,6 +268,9 @@
                     }
                 })
             })
+
+            // pagination
+
         })
     </script>
 </body>
